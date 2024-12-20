@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息检索简答题</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #4CAF50;
+        }
+
+        .question-item {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .question-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .question-text {
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #1a73e8;
+            font-size: 1.1rem;
+        }
+
+        .answer-text {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            white-space: pre-line;
+            line-height: 1.6;
+            color: #444;
+            border-left: 4px solid #4CAF50;
+        }
+
+        button {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            }
+
+            .container {
+                background: rgba(45, 45, 45, 0.95);
+                color: #fff;
+            }
+
+            .question-item {
+                background: rgba(255, 255, 255, 0.05);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .answer-text {
+                background-color: rgba(255, 255, 255, 0.05);
+                color: #ddd;
+            }
+
+            h1 {
+                color: #fff;
+            }
+
+            .question-text {
+                color: #64b5f6;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin-top: 60px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .question-item {
+                padding: 12px;
+            }
+
+            .back-button {
+                top: 10px;
+                left: 10px;
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">返回首页</a>
+    <div class="container">
+        <h1>信息检索简答题</h1>
+        <div id="questionList"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = [
+                {
+                    question: "1. 信息、知识、情报、文献的概念?",
+                    answer: "信息：事物及其属性的标识集合，是知识的基础。\n\n知识：信息的应用和生产性使用。\n\n文献：记录知识的载体，如文字、图像、符号等。\n\n情报：在社会活动中创造、交流与利用的各种信息。"
+                },
+                {
+                    question: "2. 提高文献检索查全率和查准率的方法有哪些?",
+                    answer: "提高查全率的方法：\n1) 使用上位词代替下位词\n2) 去除无意义的检索词\n3) 增加同义词或相关词\n4) 英文检索时采用截词检索\n5) 使用不同检索工���\n6) 放宽前后缀限制\n\n提高查准率的方法：\n1) 使用下位词代替上位词\n2) 增加检索词\n3) 限制检索字段\n4) 使用位置算符控制词语顺序\n5) 限定文献类型\n6) 利用词频进行检索"
+                },
+                {
+                    question: "3. 文献检索一般步骤:",
+                    answer: "1) 课题分析：确定主题、内容、文献类型和时间范围\n2) 选择检索工具：根据需要选择合适的检索工具\n3) 确定检索途径和方法：选定检索项和检索词\n4) 调整策略：如文献不符合要求，调整检索策略\n5) 获取文献：获取符合要求的文献"
+                },
+                {
+                    question: "4. 文献检索的类型有哪些？",
+                    answer: "1) 数据检索：检索存储在数据库中的数值型数据，用于回答特定问题\n\n2) 事实检索：查找关于某事件的时间、地点等信息，涉及事实和数据的混合\n\n3) 文献检索：检索与某一主题相关的文献资料，如期刊、论文等"
+                },
+                {
+                    question: "5. 文献检索的途径有哪些",
+                    answer: "1) 主题检索：根据主题进行检索，获取相关文献\n2) 分类检索：根据学科类别进行检索\n3) 作者途径：根据文献作者进行检索\n4) 题名检索：根据文献的题名进行检索\n5) 其它途径：根据文献中的特殊信息进行检索"
+                },
+                {
+                    question: "6. 专利的类型有哪些?专利的特点是什么?不同专利的保护年限是多少?在专利中，可以从哪些方面进行专利检索?",
+                    answer: "专利类型：\n1) 发明专利：保护期20年\n2) 实用新型专利：保护期10年\n3) 外观设计专利：保护期10年\n\n专利特点：\n- 新颖性\n- 创造性\n- 实用性\n\n专利检索方面：\n- 申请号\n- 专利号\n- 公开号\n- 审定号\n- 公告号\n- 授权公告号"
+                },
+                {
+                    question: "7. 名词解释：布尔检索，临近检索,短语检索,共引文献，引证文献，参考文献引文检索",
+                    answer: "布尔检索：使用布尔逻辑（与、或、非）组合检索词进行检索\n\n临近检索：查找在一定距离内同时出现检索词的文献\n\n短语检索：将多个词作为固定短语（用双引号括起）进行检索\n\n共引文献：被多篇文献共同引用的文献\n\n引证文献：引用某特定文献的文献\n\n参考文献引文检索：检索文献之间的引用关系"
+                },
+                {
+                    question: "8. 什么是查全?请说明如何查全?什么是查准?请说明如何查准?",
+                    answer: "查全率（召回率）：\n是检出相关文献占所有相关文献的比例，提升方法包括使用泛指性关键词、同义词等，但会降低查准率。\n\n查准率（精度）：\n是检出相关文献占所有检出文献的比例，提升方法包括使用专指性关键词、逻辑运算等，但会降低查全率。"
+                },
+                {
+                    question: "9. 文献有那些类型?将文献划分成这些类型的依据是什么?",
+                    answer: "根据载体材料：\n- 印刷型\n- 缩微型\n- 声像型\n- 机读型文献\n\n根据加工程度：\n- 一次文献\n- 二次文献\n- 三次文献\n\n根据出版形式：\n- 图书\n- 期刊\n- 报纸\n- 科技报告\n- 政府出版物\n- 会议文献\n- 专利\n- 学位论文\n- 标准文献\n- 档案文献\n- 产品样本"
+                },
+                {
+                    question: "10. 对于CNKI来说，检索结果进行排序，可以按照什么条件进行排序?其意义分别是什么?",
+                    answer: "相关性：根据检索词与文献内容的匹配程度\n\n被引次数：根据文献被引用的次数，反映影响力\n\n下载次数：根据文献的下载量，反映受欢迎程度\n\n时间：根据文献的发表时间，帮助获取最新研究"
+                }
+            ];
+
+            const questionList = document.getElementById('questionList');
+            
+            questions.forEach((item, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-item';
+                
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = item.question;
+                
+                const answerButton = document.createElement('button');
+                answerButton.textContent = '显示答案';
+                answerButton.onclick = function() {
+                    answerText.style.display = answerText.style.display === 'none' ? 'block' : 'none';
+                    this.textContent = answerText.style.display === 'none' ? '显示答案' : '隐藏答案';
+                };
+                
+                const answerText = document.createElement('div');
+                answerText.className = 'answer-text';
+                answerText.style.display = 'none';
+                answerText.innerText = item.answer;
+                
+                questionDiv.appendChild(questionText);
+                questionDiv.appendChild(answerButton);
+                questionDiv.appendChild(answerText);
+                questionList.appendChild(questionDiv);
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息检索判断题</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .question {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .answer {
+            color: #2196F3;
+            font-weight: bold;
+            display: none;
+            margin-top: 10px;
+        }
+
+        .show-answer {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .show-answer:hover {
+            background: #45a049;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background: #1976D2;
+        }
+
+        .navigation {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+            padding: 10px;
+            background: #2d2d2d;
+            border-radius: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-button {
+            padding: 12px 15px;
+            background: #444;
+            border: 2px solid transparent;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .nav-button:hover {
+            background: #555;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .nav-button.active {
+            background: #64B5F6;
+            border-color: #fff;
+            font-weight: bold;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            }
+
+            .container {
+                background: #333;
+                color: #fff;
+            }
+
+            h1 {
+                color: #fff;
+            }
+
+            .question {
+                background: #444;
+            }
+
+            .answer {
+                color: #64B5F6;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            .question {
+                padding: 15px;
+            }
+
+            .navigation {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                padding: 8px;
+            }
+
+            .nav-button {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #64B5F6;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .scroll-top:hover {
+            background: #1E88E5;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-top">↑</div>
+
+    <div class="container">
+        <a href="index.html" class="back-button">返回主页</a>
+        <h1>信息检索判断题</h1>
+        
+        <div class="navigation">
+            <button class="nav-button active" data-start="1" data-end="10">1-10题</button>
+            <button class="nav-button" data-start="11" data-end="20">11-20题</button>
+            <button class="nav-button" data-start="21" data-end="30">21-30题</button>
+            <button class="nav-button" data-start="31" data-end="40">31-40题</button>
+            <button class="nav-button" data-start="41" data-end="50">41-50题</button>
+            <button class="nav-button" data-start="51" data-end="58">51-58题</button>
+        </div>
+
+        <div id="questions-container"></div>
+    </div>
+
+    <script>
+        let currentQuestions = [];
+
+        function showQuestions(start, end) {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            
+            const visibleQuestions = currentQuestions.slice(start - 1, end);
+            
+            visibleQuestions.forEach(question => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-text">${question.number}. ${question.text}</div>
+                    <div class="answer">答案：${question.answer}</div>
+                    <button class="show-answer">显示答案</button>
+                `;
+                container.appendChild(questionDiv);
+            });
+
+            // 更新导航按钮状态
+            document.querySelectorAll('.nav-button').forEach(button => {
+                const buttonStart = parseInt(button.dataset.start);
+                const buttonEnd = parseInt(button.dataset.end);
+                if (buttonStart === start && buttonEnd === end) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+
+            // 平滑滚动到题目区域
+            setTimeout(scrollToQuestions, 100);
+
+            // 添加显示/隐藏答案的事件监听器
+            document.querySelectorAll('.show-answer').forEach(button => {
+                button.addEventListener('click', function() {
+                    const answer = this.previousElementSibling;
+                    if (answer.style.display === 'block') {
+                        answer.style.display = 'none';
+                        this.textContent = '显示答案';
+                    } else {
+                        answer.style.display = 'block';
+                        this.textContent = '隐藏答案';
+                    }
+                });
+            });
+        }
+
+        // 题目内容
+        const questionsText = `
+文献是记录知识的一切载体，即用文字、图像、符号等手段记录人类知识的各种载体
+答案：正确
+
+文献知识的内容与其记录方式、载体材料无关
+答案：正确
+
+文献有知识内容、信息符号和载体材料三个不可分割的基本要素构成
+答案：错误
+
+一次文献是产生二、三次文献的基础，是检索利用的主要对象
+答案：正确
+
+从零次文献、一次文献到二次文献，再到三次文献，是一个知识内容由分散到集中，由无组织到系统化的过程
+答案：正确
+
+按照加工深度不同区分文献可以分成零次、一次、二次和三次文献
+答案：正确
+
+文献检索的本质是用户的文献需求与存储在文献集合中的文献内容进行匹配的过程
+答案：正确
+
+文献检索是一种相关性检索，检索结果与检索人员的检索技巧等有关
+答案：正确
+
+近一两个月内新发表的文献可以通过浏览图书馆阅览室现期期刊的方法获取
+答案：正确
+
+直接检索法是通过各种检索工具或数据库查找文献的方法
+答案：正确
+
+作者途径是按照文献信息所包含的作者信息，利用作者姓名进行检索的途径
+答案：正确
+
+目录是将图书、报刊等文献中论文的篇目按照一定的排检方法编制而成，供人们查找篇目出处的工具
+答案：错误
+
+检索语言是用来描述文献的内容特征、外表正和表达情报提问的一种人工语言
+答案：正确
+
+关键词直接采用作者在文献中使用的语言，是一种自然语言性质的主题语言
+答案：正确
+
+目前数据库已具备智能思考能力，故在检索时无需人工扩展概念
+答案：错误
+
+将"彩色电视机"拆分成"彩色"AND"电视机"进行检索，所得结果的数量比拆分前多
+答案：正确
+
+查全率是指检索出的符合课题需要的文献与系统中含有的相关文献量之比
+答案：错误
+
+查准率是指检索出的符合课题需要的文献与检索出的相关文献量之比
+答案：错误
+
+《中国学术期刊全文数据库》的检索策略不可使用优先
+答案：错误
+
+使用《中国学术期刊全文数据库》的"词频"控制，可以提高检索结果的查准率
+答案：正确
+
+《中国学术期刊全文数据库》"在结果中检索"起到的是逻辑"或"的作用
+答案：错误
+
+《中国学术期刊全文数据库》统一检索文本框中可以输入含有布尔逻辑算符的表达式
+答案：正确
+
+《中国学术期刊全文数据库》的"在结果中检索"最多可以进行两次
+答案：错误
+
+在《中国学术期刊全文数据库》中将"打印机"扩展成"彩色打印机"后，可以增加检索结果
+答案：错误
+
+在《中国学术期刊全文数据库》中，需要预先下载安装相应浏览器才可浏览CAJ格式的原文
+答案：正确
+
+《中国学术期刊全文数据库》的原文不可以转换成文本
+答案：正确
+
+从检索的角度来看，一次文献是检索对象二次文献是检索手段
+答案：正确
+
+在检索过程中，检索词加上双引号和不加双引号其结果是相同的
+答案：错误
+
+情报是人们为一定目的而收集的有使用价值的知识或者信息，是被有目的收集、利用的知识与信息
+答案：正确
+
+特种文献是指记录在特殊材料上的出版物，一般单独成册
+答案：错误
+
+信息检索的基本原理的核心是用户信息需求与文献信息集合的比较和选择，是两者的匹配过程
+答案：正确
+
+文献综述也叫文献写作报告，是在查阅了某一特定学科或者专题领域在一段时间内相当数量文献资料的基础上，经过分析和研究，选取有关报信息，进行归纳整理，做出综合性描述的一种学术论文，它是科学文献的一种
+答案：错误
+
+搜索引擎简单地说，就是采用信息自动跟踪，标引等技术在因特网上建立专门提供信息资源导航服务的检索工具。搜索引擎其实也是一个网站，只不过该网站专门提供信息检索服务
+答案：正确
+
+从文献检索的角度来看，一次文献是检索对象，二次文献是检索手段
+答案：错误
+
+OR或+运算符实现逻辑"与"组配，用来组配不同的概念的检索词。是一种概念相交和限定关系的组配。其基本作用是对检索范围加以限定，逐步缩小检索范围，提高检索结果的查准率
+答案：错误
+
+NOT或-运算符实现逻辑"非"组配，是用来排除含有某些词的记录，其基本作用是缩小检索范围，但并不一定能提高文献命中的准确性，一般只起到减少文献输出量的作用。在联机检索中可降低检索费用
+答案：正确
+
+一篇论文可选取8-10个词作为关键词
+答案：错误
+
+查找文献资料、写文献综述是科研选题及进行科研的第一步，因此学习文献综述的撰写也是为今后科研活动打基础的过程
+答案：正确
+
+关键词和主题词都是表征文献实质性内容的词汇，前者是经过词表规范的，后者是未经词表规范的自由词
+答案：错误
+
+一项发明创造要获得专利权必须具备新颖性、创造性和实用性
+答案：正确
+
+专利是受法律保护的，其中发明专利的保护期限是10年
+答案：错误
+
+题录型检索工具，其著录项目主要包括文献篇名、作者、文献出处
+答案：正确
+
+使用"opencourseware site:harvard.edu/"这样的检索表达式在百度等搜索引擎中检索可以找到哈佛大学的公开课
+答案：正确
+
+并不是所有的网上资源都有明确的下载链接的资源，对于一些没有明确下载链接的资源，下载的时候需要一些特殊的方法和技巧
+答案：正确
+
+在百度搜索时使用site语法增加检索条件，缩小了结果范围，提高了查准率
+答案：正确
+
+多数搜索引擎对支持对以DOC、XLS、PPT、RTF、PDF为后缀名的文件进行检索
+答案：正确
+
+在百度搜索时，使用空格增加检索条件，缩小了结果范围，提高了查准率
+答案：正确
+
+在百度搜索时使用site语法，增加检索条件，缩小了结果范围，提高了查全率
+答案：错误
+
+多数搜索引擎支持特定文件类型检索，百度支持所有的文件类型，也就是说"filetype:"可以接任何文件后缀名
+答案：错误
+
+国家统计局网站除提供《中国统计年鉴》免费下载外，还提供多种统计数据的在线免费查询，具体地址为:http://data.stats.gov.cn
+答案：正确
+
+世界银行提供全球多数国家的统计数据，具体可以通过http://data.worldbank.org进行免费查询
+答案：正确
+
+查全率是指检索出的符合课题需要的文献与系统中含有的相关文献量之比
+答案：错误
+
+查准率是指检索出的符合课题需要的文献与检索出的相关文献量之比
+答案：错误
+
+关键词语言一般直接从文献的篇名或内容中抽取，不受词表控制，存在同义词、多义词
+答案：正确
+
+零次文献是指未公开交流于社会的文献
+答案：正确
+
+专利说明书属于一次文献，专利文献检索工具属于二次文献
+答案：正确
+
+二次文献是把一次文献从分散、无序的状态变成集中、有序化的状态
+答案：正确
+`;
+
+        // 处理题目文本
+        const questions = questionsText.split('\n\n');
+        currentQuestions = questions.map((question, index) => {
+            const [q, a] = question.split('\n答案：');
+            if (!q || !a) return null;
+            return {
+                number: index + 1,
+                text: q.trim(),
+                answer: a.trim()
+            };
+        }).filter(q => q !== null);
+
+        // 默认显示1-10题
+        showQuestions(1, 10);
+
+        // 添加导航按钮事件监听器
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const start = parseInt(this.dataset.start);
+                const end = parseInt(this.dataset.end);
+                showQuestions(start, end);
+            });
+        });
+
+        // 滚动到顶部按钮逻辑
+        const scrollTopButton = document.querySelector('.scroll-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopButton.style.display = 'flex';
+            } else {
+                scrollTopButton.style.display = 'none';
+            }
+        });
+        
+        scrollTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 平滑滚动到当前题目组
+        function scrollToQuestions() {
+            const container = document.getElementById('questions-container');
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>判断题 - 软件工程复习</title>
+    <style>
+        /* 基础样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            background-color: #f5f7fa;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        /* 头部样式 */
+        .header {
+            background: #1a73e8;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 主容器样式 */
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* 左侧导航栏样式 */
+        .nav-sidebar {
+            width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+            transition: all 0.3s ease;
+        }
+
+        .nav-sidebar h2 {
+            margin-bottom: 15px;
+            color: #1a73e8;
+            font-size: 1.2rem;
+        }
+
+        .chapter-list {
+            list-style: none;
+        }
+
+        .chapter-item {
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .chapter-item:hover {
+            background-color: #f0f4f8;
+            transform: translateX(5px);
+        }
+
+        .chapter-item.active {
+            background-color: #1a73e8;
+            color: white;
+            font-weight: 500;
+        }
+
+        /* 右侧内容区样式 */
+        .content-area {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .content-area h2 {
+            margin-bottom: 20px;
+            color: #1a73e8;
+            font-size: 1.5rem;
+        }
+
+        /* 题目卡片样式 */
+        .question-card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .question-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .options-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .option-button {
+            padding: 12px 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .option-button:hover {
+            border-color: #1a73e8;
+            background-color: #f8f9fa;
+        }
+
+        .option-button.correct {
+            background-color: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .option-button.wrong {
+            background-color: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .answer-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #1a73e8;
+            display: none;
+        }
+
+        .answer-section div:first-child {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #1a73e8;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 15px;
+            }
+
+            .container {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .nav-sidebar {
+                width: 100%;
+                position: static;
+                margin-bottom: 20px;
+            }
+
+            .chapter-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .chapter-item {
+                flex: 1;
+                min-width: 140px;
+                text-align: center;
+                padding: 10px;
+                margin: 0;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .options-group {
+                flex-direction: column;
+            }
+
+            .option-button {
+                max-width: none;
+            }
+        }
+
+        /* 深色模式适配 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a1a;
+                color: #e0e0e0;
+            }
+
+            .nav-sidebar, .question-card {
+                background-color: #2d2d2d;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .chapter-item:hover {
+                background-color: #3d3d3d;
+            }
+
+            .option-button {
+                background-color: #2d2d2d;
+                color: #e0e0e0;
+                border-color: #404040;
+            }
+
+            .answer-section {
+                background-color: #333;
+            }
+
+            .question-text {
+                color: #e0e0e0;
+            }
+        }
+
+        /* 移动端菜单按钮 */
+        .menu-button {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-button:hover {
+            transform: scale(1.1);
+        }
+
+        /* 修改移动端适配样式 */
+        @media (max-width: 768px) {
+            .menu-button {
+                display: block;
+            }
+
+            .container {
+                position: relative;
+                padding: 15px;
+            }
+
+            .nav-sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                margin: 0;
+                border-radius: 0;
+                transition: transform 0.3s ease;
+                z-index: 999;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                padding-top: 60px;
+                background: white;
+            }
+
+            .nav-sidebar h2 {
+                padding: 0 15px;
+                margin-bottom: 10px;
+            }
+
+            .chapter-list {
+                display: block;
+                flex: 1;
+                overflow-y: auto;
+                padding: 0 15px 20px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .nav-sidebar.show {
+                transform: translateX(280px);
+            }
+
+            .chapter-item {
+                width: 100%;
+                text-align: left;
+                padding: 15px;
+                margin: 5px 0;
+                border-radius: 8px;
+            }
+
+            /* 遮罩层 */
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 998;
+                touch-action: none;
+            }
+
+            .overlay.show {
+                display: block;
+            }
+
+            /* 内容区域适配 */
+            .content-area {
+                width: 100%;
+                padding: 0;
+                margin-top: 10px;
+            }
+
+            /* 当导航栏打开时，防止背景内容滚动 */
+            body.nav-open {
+                overflow: hidden;
+            }
+        }
+
+        /* 深色模式下的导航栏样式 */
+        @media (prefers-color-scheme: dark) {
+            /* ... 其他深色模式样式保持不变 ... */
+            
+            @media (max-width: 768px) {
+                .nav-sidebar {
+                    background: #2d2d2d;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-button">返回主页</a>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    <button class="menu-button" id="menuButton">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"></path>
+        </svg>
+    </button>
+
+    <div class="container">
+        <!-- 左侧导航栏 -->
+        <nav class="nav-sidebar">
+            <h2>章节导航</h2>
+            <ul class="chapter-list" id="chapterList"></ul>
+        </nav>
+
+        <!-- 右侧内容区 -->
+        <main class="content-area" id="contentArea">
+            <h2 id="currentChapter">请选择章节</h2>
+            <div id="questionsList"></div>
+        </main>
+    </div>
+
+    <script>
+        let questions = {};
+        
+        // 加载题目数据
+        async function loadQuestions() {
+            try {
+                const response = await fetch('./判断题.txt');
+                const text = await response.text();
+                
+                // 解析文本内容
+                const lines = text.split('\n');
+                let currentChapter = null;
+                let currentQuestion = null;
+                
+                for (let line of lines) {
+                    line = line.trim();
+                    if (!line) continue;
+                    
+                    // 检测章节
+                    if (line.startsWith('第') && line.includes('章')) {
+                        currentChapter = line;
+                        if (!questions[currentChapter]) {
+                            questions[currentChapter] = [];
+                        }
+                        continue;
+                    }
+                    
+                    // 检测题目
+                    const questionMatch = line.match(/^\d+\.\s*(.*?)（[✓✗]）$/);
+                    if (questionMatch) {
+                        if (currentQuestion) {
+                            questions[currentChapter].push(currentQuestion);
+                        }
+                        currentQuestion = {
+                            question: questionMatch[1],
+                            answer: line.includes('（✓）'),
+                            explanation: ''
+                        };
+                        continue;
+                    }
+                    
+                    // 检测解释
+                    if (line.startsWith('解释：') && currentQuestion) {
+                        currentQuestion.explanation = line.substring(3);
+                    }
+                }
+                
+                // 添加最后一个题目
+                if (currentQuestion && currentChapter) {
+                    questions[currentChapter].push(currentQuestion);
+                }
+                
+                initializeChapterList();
+            } catch (error) {
+                console.error('加载题目失败:', error);
+            }
+        }
+
+        // 初始化章节列表
+        function initializeChapterList() {
+            const chapterList = document.getElementById('chapterList');
+            
+            Object.keys(questions).forEach(chapter => {
+                const li = document.createElement('li');
+                li.className = 'chapter-item';
+                li.textContent = chapter;
+                li.onclick = () => showChapterQuestions(chapter);
+                chapterList.appendChild(li);
+            });
+        }
+
+        // 显示章节题目
+        function showChapterQuestions(chapter) {
+            // 更新章节标题
+            document.getElementById('currentChapter').textContent = chapter;
+            
+            // 更新章节选中状态
+            document.querySelectorAll('.chapter-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent === chapter) {
+                    item.classList.add('active');
+                }
+            });
+
+            // 显示题目列表
+            const questionsList = document.getElementById('questionsList');
+            questionsList.innerHTML = '';
+            
+            questions[chapter].forEach((question, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.innerHTML = `
+                    <div class="question-text">${index + 1}. ${question.question}</div>
+                    <div class="options-group">
+                        <button class="option-button" onclick="checkAnswer(${index}, true)">正确</button>
+                        <button class="option-button" onclick="checkAnswer(${index}, false)">错误</button>
+                    </div>
+                    <div class="answer-section" id="answer-${index}"></div>
+                `;
+                questionsList.appendChild(questionCard);
+            });
+
+            if (window.innerWidth <= 768) {
+                toggleMenu();
+            }
+        }
+
+        // 检查答案
+        function checkAnswer(index, userAnswer) {
+            const chapter = document.getElementById('currentChapter').textContent;
+            const question = questions[chapter][index];
+            const answerSection = document.getElementById(`answer-${index}`);
+            const optionsGroup = answerSection.previousElementSibling;
+            
+            // 显示答案和解释
+            answerSection.style.display = 'block';
+            answerSection.innerHTML = `
+                <div>答案：${question.answer ? '正确' : '错误'}</div>
+                <div>${question.explanation}</div>
+            `;
+            
+            // 更新按钮状态
+            const buttons = optionsGroup.getElementsByClassName('option-button');
+            Array.from(buttons).forEach(button => {
+                const isCorrect = (button.textContent === '正确') === question.answer;
+                const isSelected = (button.textContent === '正确') === userAnswer;
+                
+                if (isSelected) {
+                    button.className = `option-button ${isCorrect ? 'correct' : 'wrong'}`;
+                } else if (isCorrect) {
+                    button.className = 'option-button correct';
+                }
+            });
+        }
+
+        // 页面加载时初始化
+        window.onload = loadQuestions;
+
+        // 添加移动端菜单控制
+        const menuButton = document.getElementById('menuButton');
+        const navSidebar = document.querySelector('.nav-sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuButton.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        function toggleMenu() {
+            navSidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+            menuButton.classList.toggle('active');
+            document.body.classList.toggle('nav-open');
+        }
+
+        // 监听窗口大小变化
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                navSidebar.classList.remove('show');
+                overlay.classList.remove('show');
+                menuButton.classList.remove('active');
+            }
+        });
+
+        // 添加触摸事件处理
+        const chapterList = document.querySelector('.chapter-list');
+        let touchStartY = 0;
+        let scrollStartY = 0;
+
+        chapterList.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+            scrollStartY = chapterList.scrollTop;
+        }, { passive: true });
+
+        chapterList.addEventListener('touchmove', (e) => {
+            const touchY = e.touches[0].clientY;
+            const walk = touchY - touchStartY;
+            chapterList.scrollTop = scrollStartY - walk;
+            
+            // 防止到达边界时页面滚动
+            if (
+                (chapterList.scrollTop === 0 && walk > 0) ||
+                (chapterList.scrollHeight - chapterList.clientHeight === chapterList.scrollTop && walk < 0)
+            ) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html> 

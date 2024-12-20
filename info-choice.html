@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>信息检索选择题</title>
+    <!-- 复用 choice.html 的样式 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Microsoft YaHei', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f7f7f7;
+        }
+        
+        /* 导航栏样式 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4CAF50;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 12px;
+        }
+        
+        .sidebar a {
+            text-decoration: none;
+            color: #666;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar a:hover {
+            background-color: #e8f5e9;
+            color: #4CAF50;
+        }
+        
+        .sidebar a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        /* 主内容区样式 */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            padding-top: 60px;
+            max-width: 100%;
+            margin-right: auto;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            z-index: 900;
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 题目样式 */
+        .question {
+            background-color: #fff;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .question h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .question div {
+            margin: 12px 0;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: background-color 0.3s ease;
+        }
+        
+        .question div:active {
+            background-color: #e9ecef;
+        }
+        
+        .show-answer-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+        
+        .show-answer-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .answer {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            color: #4CAF50;
+            font-weight: bold;
+            display: none;
+        }
+        
+        /* 章标题样式 */
+        .chapter-title {
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4CAF50;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        /* 统一按钮样式 */
+        .menu-toggle, .back-button {
+            position: fixed !important;
+            top: 10px !important;
+            z-index: 1000;
+            background-color: #2196F3 !important;
+            color: white !important;
+            border: none !important;
+            padding: 6px 10px !important;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            font-size: 0.9rem !important;
+            text-decoration: none;
+            transition: all 0.3s ease !important;
+        }
+
+        .menu-toggle {
+            left: 15px;
+        }
+
+        .back-button {
+            right: 15px;
+        }
+
+        .menu-toggle:hover, .back-button:hover {
+            background-color: #1976D2 !important;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .menu-toggle, .back-button {
+                top: 8px !important;
+                padding: 4px 8px !important;
+                font-size: 0.85rem !important;
+            }
+        }
+
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            body {
+                font-size: 15px;
+            }
+
+            .menu-toggle {
+                top: 5px !important;
+                padding: 4px 8px;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 999;
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            body.menu-open {
+                overflow: hidden;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+                padding-top: 60px;
+            }
+
+            .question {
+                padding: 16px;
+                margin-bottom: 12px;
+            }
+
+            .question h3 {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+
+            .question div {
+                padding: 14px;
+                margin: 8px 0;
+                font-size: 15px;
+            }
+
+            .back-button {
+                top: 5px !important;
+                padding: 4px 10px !important;
+                font-size: 0.85rem;
+            }
+
+            .chapter-title {
+                font-size: 18px;
+                margin: 20px 0 15px 0;
+            }
+
+            .sidebar a {
+                padding: 12px 16px;
+                margin: 4px 0;
+            }
+
+            .main-content {
+                padding-bottom: env(safe-area-inset-bottom);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+
+            /* 当菜单打开时调整返回按钮的层级 */
+            body.menu-open .back-button {
+                z-index: 1001;
+            }
+        }
+
+        /* 添加暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+            }
+
+            .question {
+                background-color: #1e1e1e;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            }
+
+            .question div {
+                background-color: #2d2d2d;
+                color: #e0e0e0;
+            }
+
+            .question div:hover {
+                background-color: #363636;
+            }
+
+            .sidebar {
+                background-color: #1e1e1e;
+            }
+
+            .sidebar a {
+                color: #e0e0e0;
+            }
+
+            .sidebar a:hover {
+                background-color: #2d2d2d;
+            }
+
+            .answer {
+                background-color: #2d2d2d;
+                color: #4CAF50;
+            }
+        }
+
+        /* 添加滚动优化 */
+        .sidebar, .main-content {
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
+        /* 添加触摸反馈 */
+        .question div, .show-answer-btn, .back-button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 遮罩层 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* 修改顶部导航栏的样式 */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #4CAF50;
+            padding: 30px 20px 15px 20px !important;
+            z-index: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .chapter-indicator {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 8px;
+        }
+
+        .back-button {
+            position: absolute !important;
+            right: 5px !important;
+            top: 10px !important;
+            background-color: #2196F3 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px;
+            padding: 4px 8px !important;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1;
+            transition: all 0.3s ease !important;
+        }
+
+        .back-button:hover {
+            background-color: #1976D2 !important;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .top-nav {
+                padding: 25px 20px 12px 20px !important;
+            }
+            
+            .chapter-indicator {
+                font-size: 1rem;
+                padding: 0 10px;
+                top: 8px;
+            }
+            
+            .back-button {
+                top: 8px !important;
+                padding: 3px 6px !important;
+                font-size: 0.75rem;
+            }
+            
+            .menu-toggle {
+                top: 8px !important;
+                padding: 3px 6px !important;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .top-nav {
+                background-color: #2d2d2d;
+            }
+        }
+
+        .question div.option {
+            cursor: pointer;
+        }
+
+        .question div.correct {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+            border: 1px solid #81c784;
+        }
+
+        .question div.wrong {
+            background-color: #ffcdd2;
+            color: #c62828;
+            border: 1px solid #e57373;
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .question div.correct {
+                background-color: #1b5e20;
+                color: #a5d6a7;
+                border: 1px solid #2e7d32;
+            }
+
+            .question div.wrong {
+                background-color: #b71c1c;
+                color: #ffcdd2;
+                border: 1px solid #c62828;
+            }
+        }
+
+        /* 添加多选题样式 */
+        .multiple-choice {
+            border-left: 4px solid #ff9800;
+        }
+
+        .multiple-choice .question-title::before {
+            content: "[多选题]";
+            color: #ff9800;
+            margin-right: 8px;
+        }
+
+        /* 添加导航样式 */
+        .nav-section {
+            margin-bottom: 20px;
+        }
+        
+        .nav-section h4 {
+            color: #2196F3;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 3px solid #2196F3;
+        }
+        
+        .nav-section ul {
+            list-style: none;
+            padding-left: 15px;
+        }
+        
+        .nav-section li {
+            margin: 5px 0;
+        }
+        
+        .nav-section a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-section a:hover {
+            color: #2196F3;
+        }
+    </style>
+    <script src="./loadInfoChoiceQuestions.js"></script>
+</head>
+<body>
+    <button class="menu-toggle">☰ 目录</button>
+    <div class="overlay"></div>
+    
+    <div class="sidebar">
+        <h3>导航</h3>
+        <div class="nav-section">
+            <h4>单选题</h4>
+            <ul id="single-choice-nav">
+                <!-- 单选题导航项将通过JavaScript动态加载 -->
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h4>多选题</h4>
+            <ul id="multiple-choice-nav">
+                <!-- 多选题导航项将通过JavaScript动态加载 -->
+            </ul>
+        </div>
+    </div>
+
+    <div class="top-nav">
+        <div class="chapter-indicator">信息检索选择题</div>
+        <a href="index.html" class="back-button">
+            返回首页 →
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div id="questions-container">
+            <!-- 题目将通过JavaScript动态加载 -->
+        </div>
+    </div>
+
+    <script>
+        let questionsData = {};
+        let currentPage = '';  // 当前显示的页面
+        
+        // 加载题目数据
+        async function loadQuestions() {
+            try {
+                questionsData = await loadQuestionsFromFile();
+                // 默认显示第一组题目
+                const firstGroup = Object.keys(questionsData)[0];
+                showQuestionsGroup(firstGroup);
+                setupNavigation();
+            } catch (error) {
+                console.error('加载题目失败:', error);
+            }
+        }
+
+        // 显示指定组的题目
+        function showQuestionsGroup(groupId) {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = ''; // 清空当前内容
+            
+            if (questionsData[groupId]) {
+                const chapterDiv = document.createElement('div');
+                chapterDiv.className = 'chapter';
+                chapterDiv.id = groupId;
+                
+                const chapterTitle = document.createElement('h2');
+                chapterTitle.textContent = groupId;
+                chapterDiv.appendChild(chapterTitle);
+                
+                questionsData[groupId].forEach((question, index) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = `question ${question.isMultipleChoice ? 'multiple-choice' : ''}`;
+                    questionDiv.dataset.answered = 'false';
+                    
+                    const questionContent = document.createElement('div');
+                    questionContent.className = 'question-title';
+                    questionContent.textContent = question.question;
+                    questionDiv.appendChild(questionContent);
+                    
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options';
+                    
+                    question.options.forEach((option, optionIndex) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'option';
+                        optionDiv.textContent = option;
+                        optionDiv.dataset.index = optionIndex;
+                        optionDiv.onclick = () => checkAnswer(optionDiv, question.answer, questionDiv);
+                        optionsDiv.appendChild(optionDiv);
+                    });
+                    
+                    questionDiv.appendChild(optionsDiv);
+                    
+                    const answerDiv = document.createElement('div');
+                    answerDiv.className = 'answer';
+                    answerDiv.textContent = `正确答案：${question.answer}`;
+                    answerDiv.style.display = 'none';
+                    questionDiv.appendChild(answerDiv);
+                    
+                    chapterDiv.appendChild(questionDiv);
+                });
+                
+                container.appendChild(chapterDiv);
+                currentPage = groupId;
+                
+                // 更新导航栏的活动状态
+                updateNavigationActive(groupId);
+                
+                // 滚动到顶部
+                window.scrollTo(0, 0);
+            }
+        }
+
+        // 更新导航栏的活动状态
+        function updateNavigationActive(activeId) {
+            document.querySelectorAll('.sidebar a').forEach(a => {
+                if (a.getAttribute('href') === `#${activeId}`) {
+                    a.classList.add('active');
+                } else {
+                    a.classList.remove('active');
+                }
+            });
+        }
+
+        // 检查答案
+        function checkAnswer(optionElement, correctAnswer, questionDiv) {
+            if (questionDiv.dataset.answered === 'true') return;
+            
+            const allOptions = questionDiv.querySelectorAll('.option');
+            const answerDiv = questionDiv.querySelector('.answer');
+            const isMultipleChoice = questionDiv.classList.contains('multiple-choice');
+            
+            if (isMultipleChoice) {
+                // 多选题逻辑
+                optionElement.classList.toggle('selected');
+                const selectedOptions = Array.from(allOptions)
+                    .filter(opt => opt.classList.contains('selected'))
+                    .map(opt => String.fromCharCode(65 + parseInt(opt.dataset.index)))
+                    .sort()
+                    .join('');
+                
+                if (selectedOptions.length >= correctAnswer.length) {
+                    questionDiv.dataset.answered = 'true';
+                    answerDiv.style.display = 'block';
+                    
+                    allOptions.forEach((option, index) => {
+                        const currentAnswer = String.fromCharCode(65 + index);
+                        if (correctAnswer.includes(currentAnswer)) {
+                            option.classList.add('correct');
+                        } else if (option.classList.contains('selected')) {
+                            option.classList.add('wrong');
+                        }
+                    });
+                }
+            } else {
+                // 单选题逻辑
+                questionDiv.dataset.answered = 'true';
+                const selectedAnswer = String.fromCharCode(65 + parseInt(optionElement.dataset.index));
+                answerDiv.style.display = 'block';
+                
+                allOptions.forEach((option, index) => {
+                    const currentAnswer = String.fromCharCode(65 + index);
+                    if (currentAnswer === correctAnswer) {
+                        option.classList.add('correct');
+                    } else if (index === parseInt(optionElement.dataset.index)) {
+                        option.classList.add('wrong');
+                    }
+                });
+            }
+        }
+
+        // 设置导航
+        function setupNavigation() {
+            const singleNav = document.getElementById('single-choice-nav');
+            const multipleNav = document.getElementById('multiple-choice-nav');
+            
+            Object.keys(questionsData).forEach(chapter => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `javascript:void(0)`;
+                a.textContent = chapter.replace('单选题 ', '').replace('多选题 ', '');
+                a.onclick = () => showQuestionsGroup(chapter);
+                li.appendChild(a);
+                
+                if (chapter.startsWith('单选题')) {
+                    singleNav.appendChild(li);
+                } else {
+                    multipleNav.appendChild(li);
+                }
+            });
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', loadQuestions);
+
+        // 添加菜单切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            const body = document.body;
+
+            function toggleMenu() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+                body.classList.toggle('menu-open');
+            }
+
+            menuToggle.addEventListener('click', toggleMenu);
+            overlay.addEventListener('click', toggleMenu);
+
+            // 点击导航链接后关闭菜单
+            const navLinks = document.querySelectorAll('.sidebar a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        toggleMenu();
+                    }
+                });
+            });
+
+            // 处理窗口大小变化
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    body.classList.remove('menu-open');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
