@@ -22,10 +22,10 @@
         
         /* 导航栏样式 */
         .sidebar {
-            width: 280px;
+            width: 300px;
             background-color: #fff;
             height: 100vh;
-            padding: 20px;
+            padding: 20px 20px 20px 25px;
             position: fixed;
             left: 0;
             top: 0;
@@ -40,6 +40,14 @@
             font-size: 1.2rem;
             padding-bottom: 10px;
             border-bottom: 2px solid #4CAF50;
+        }
+        
+        /* 添加导航区域标题样式 */
+        .nav-section h4 {
+            margin: 15px 0 10px 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            padding-left: 2px;  /* 添加左侧内边距 */
         }
         
         .sidebar ul {
@@ -71,7 +79,7 @@
         
         /* 主内容区样式 */
         .main-content {
-            margin-left: 250px;
+            margin-left: 300px;
             padding: 20px;
             padding-top: 60px;
             max-width: 100%;
@@ -634,7 +642,7 @@
             font-weight: 500;
         }
 
-        /* 暗���模式支持 */
+        /* 暗色模式支持 */
         @media (prefers-color-scheme: dark) {
             .question.correct-question {
                 background-color: rgba(27, 94, 32, 0.1);
@@ -695,7 +703,7 @@
             transition: all 0.3s ease;
         }
 
-        /* 优化选项样式 */
+        /* ��化选项样式 */
         .question .option {
             position: relative;
             padding: 15px 20px;
@@ -866,6 +874,55 @@
                 border-color: #64b5f6;
             }
         }
+
+        /* 错题按钮样式 */
+        .wrong-filter-btn {
+            display: block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .wrong-filter-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .wrong-filter-btn.active {
+            background-color: #4CAF50;
+        }
+
+        /* 隐藏非错题的样式 */
+        .question.hidden {
+            display: none;
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .wrong-filter-btn {
+                background-color: #d32f2f;
+            }
+            
+            .wrong-filter-btn:hover {
+                background-color: #b71c1c;
+            }
+            
+            .wrong-filter-btn.active {
+                background-color: #388e3c;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .wrong-filter-btn {
+                font-size: 0.85rem;
+                padding: 4px 8px;
+            }
+        }
     </style>
     <script src="./loadInfoChoiceQuestions.js"></script>
 </head>
@@ -878,7 +935,7 @@
         <div class="nav-section">
             <h4>单选题</h4>
             <ul id="single-choice-nav">
-                <!-- 单选题���航项将通过JavaScript动态加载 -->
+                <!-- 单选题导航项将通过JavaScript动态加载 -->
             </ul>
         </div>
         <div class="nav-section">
@@ -900,6 +957,7 @@
         <p class="total">总题数：<span id="total-count">0</span></p>
         <p class="answered">已做题：<span id="answered-count">0</span></p>
         <p class="correct">正确数：<span id="correct-count">0</span></p>
+        <button id="show-wrong-only" class="wrong-filter-btn">仅看错题</button>
     </div>
 
     <div class="main-content">
@@ -913,7 +971,7 @@
         let currentPage = '';  // 当前显示的页面
         let correctAnswered = 0; // 正确数计数
         let answeredCount = 0;  // 已做题数计数
-        let currentPageTotalQuestions = 0; // 当前页面总题数
+        let currentPageTotalQuestions = 0; // 当前页面总题��
         
         // 加载题目数据
         async function loadQuestions() {
@@ -1155,6 +1213,35 @@
                     sidebar.classList.remove('active');
                     overlay.classList.remove('active');
                     body.classList.remove('menu-open');
+                }
+            });
+        });
+
+        // 添加错题筛选功能
+        const wrongFilterBtn = document.getElementById('show-wrong-only');
+        let showWrongOnly = false;
+
+        wrongFilterBtn.addEventListener('click', function() {
+            showWrongOnly = !showWrongOnly;
+            this.classList.toggle('active');
+            this.textContent = showWrongOnly ? '显示全部' : '仅看错题';
+            
+            const questions = document.querySelectorAll('.question');
+            questions.forEach(question => {
+                if (showWrongOnly) {
+                    // 如果是仅看错题模式
+                    if (question.dataset.answered === 'true') {
+                        if (question.classList.contains('wrong-question')) {
+                            question.classList.remove('hidden');
+                        } else {
+                            question.classList.add('hidden');
+                        }
+                    } else {
+                        question.classList.add('hidden');
+                    }
+                } else {
+                    // 显示全部题目
+                    question.classList.remove('hidden');
                 }
             });
         });

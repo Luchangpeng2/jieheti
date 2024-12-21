@@ -26,6 +26,7 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
         }
 
         h1 {
@@ -40,11 +41,66 @@
             background: #f8f9fa;
             border-radius: 10px;
             position: relative;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
         }
 
-        .question-text {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
+        /* 添加已答题状态样式 */
+        .question[data-answered="true"] {
+            background: #f8f9fa;
+        }
+
+        .question[data-answered="true"][data-correct="true"] {
+            border-left-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .question[data-answered="true"][data-correct="false"] {
+            border-left-color: #f44336;
+            background: rgba(244, 67, 54, 0.05);
+        }
+
+        .options {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .option-btn {
+            padding: 8px 20px;
+            border: 2px solid #2196F3;
+            background: transparent;
+            color: #2196F3;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            min-width: 120px;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .option-btn:hover::after {
+            left: 100%;
+        }
+
+        .option-btn:hover {
+            background: rgba(33, 150, 243, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .answer {
@@ -52,6 +108,55 @@
             font-weight: bold;
             display: none;
             margin-top: 10px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .answer.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stats {
+            position: fixed;
+            top: 55px;
+            right: 20px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .stats p {
+            margin: 5px 0;
+            font-weight: 500;
+        }
+
+        .stats p span {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .stats {
+                background: rgba(51, 51, 51, 0.9);
+            }
+            
+            .question[data-answered="true"][data-correct="true"] {
+                background: rgba(76, 175, 80, 0.1);
+            }
+            
+            .question[data-answered="true"][data-correct="false"] {
+                background: rgba(244, 67, 54, 0.1);
+            }
         }
 
         .show-answer {
@@ -63,6 +168,7 @@
             cursor: pointer;
             font-size: 0.9rem;
             transition: background-color 0.3s;
+            display: none;
         }
 
         .show-answer:hover {
@@ -378,6 +484,13 @@
                 padding: 3px 6px !important;
                 font-size: 0.75rem;
             }
+
+            .stats {
+                top: 45px;
+                right: 10px;
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
         }
     </style>
 </head>
@@ -394,7 +507,7 @@
     </div>
 
     <div class="sidebar">
-        <h3>导航目录</h3>
+        <h3>导目录</h3>
         <div class="nav-section">
             <ul id="questions-nav">
                 <li><a href="javascript:void(0)" data-start="1" data-end="10">1-10题</a></li>
@@ -409,11 +522,18 @@
 
     <div class="container">
         <h1>信息检索判断题</h1>
+        <div class="stats">
+            <p>总题数：<span id="total-count">0</span></p>
+            <p>已答题：<span id="answered-count">0</span></p>
+            <p>正确数：<span id="correct-count">0</span></p>
+        </div>
         <div id="questions-container"></div>
     </div>
 
     <script>
         let currentQuestions = [];
+        let answeredCount = 0;
+        let correctCount = 0;
 
         function showQuestions(start, end) {
             const container = document.getElementById('questions-container');
@@ -426,39 +546,63 @@
                 questionDiv.className = 'question';
                 questionDiv.innerHTML = `
                     <div class="question-text">${question.number}. ${question.text}</div>
+                    <div class="options">
+                        <button class="option-btn" data-value="正确">正确</button>
+                        <button class="option-btn" data-value="错误">错误</button>
+                    </div>
                     <div class="answer">答案：${question.answer}</div>
-                    <button class="show-answer">显示答案</button>
                 `;
                 container.appendChild(questionDiv);
-            });
 
-            // 更新导航按钮状态
-            document.querySelectorAll('.nav-button').forEach(button => {
-                const buttonStart = parseInt(button.dataset.start);
-                const buttonEnd = parseInt(button.dataset.end);
-                if (buttonStart === start && buttonEnd === end) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
-            });
+                // 添加选项点击事件
+                const options = questionDiv.querySelectorAll('.option-btn');
+                
+                options.forEach(option => {
+                    option.addEventListener('click', () => {
+                        if (questionDiv.dataset.answered) return; // 如果已经回答过，不再响应点击
+                        
+                        const userAnswer = option.dataset.value;
+                        const correctAnswer = question.answer;
+                        const answerDiv = questionDiv.querySelector('.answer');
+                        
+                        // 更新答题统计
+                        if (!questionDiv.dataset.answered) {
+                            answeredCount++;
+                            document.getElementById('answered-count').textContent = answeredCount;
+                            
+                            if (userAnswer === correctAnswer) {
+                                correctCount++;
+                                document.getElementById('correct-count').textContent = correctCount;
+                            }
+                            questionDiv.dataset.answered = 'true';
+                        }
 
-            // 平滑滚动到题目区域
-            setTimeout(scrollToQuestions, 100);
+                        // 显示正确/错误状态
+                        options.forEach(opt => {
+                            opt.disabled = true;
+                            if (opt.dataset.value === correctAnswer) {
+                                opt.classList.add('correct');
+                            } else if (opt.dataset.value === userAnswer && userAnswer !== correctAnswer) {
+                                opt.classList.add('wrong');
+                            }
+                        });
 
-            // 添加显示/隐藏答案的事件监听器
-            document.querySelectorAll('.show-answer').forEach(button => {
-                button.addEventListener('click', function() {
-                    const answer = this.previousElementSibling;
-                    if (answer.style.display === 'block') {
-                        answer.style.display = 'none';
-                        this.textContent = '显示答案';
-                    } else {
-                        answer.style.display = 'block';
-                        this.textContent = '隐藏答案';
-                    }
+                        // 显示答案解释
+                        answerDiv.style.display = 'block';
+                        // 添加一个小延迟来触发过渡动画
+                        setTimeout(() => {
+                            answerDiv.classList.add('show');
+                        }, 10);
+                        
+                        // 更新题目状态
+                        questionDiv.dataset.answered = 'true';
+                        questionDiv.dataset.correct = (userAnswer === correctAnswer).toString();
+                    });
                 });
             });
+
+            // 更新总题数显示
+            document.getElementById('total-count').textContent = end - start + 1;
         }
 
         // 题目内容
@@ -484,19 +628,19 @@
 文献检索的本质是用户的文献需求与存储在文献集合中的文献内容进行匹配的过程
 答案：正确
 
-文献检索是一种相关性检索，检索结果与检索人员的检索技巧等有关
+文献检索是一相关性检索，检索结果与检索人员的检索技巧等有关
 答案：正确
 
 近一两个月内新发表的文献可以通过浏览图书馆阅览室现期期刊的方法获取
 答案：正确
 
-直接检索法是通过各种检索工具或数据库查找文献的方法
+���接检索法是通过各种检索工具或数据库查找文献的方法
 答案：正确
 
 作者途径是按照文献信息所包含的作者信息，利用作者姓名进行检索的途径
 答案：正确
 
-目录是将图书、报刊等文献中论文的篇目按照一定的排检方法编制而成，供人们查找篇目出处的工具
+目录是将图书、报刊等文献中论文的篇目按照一定的排检方法编制而成，供人们查找篇出处的工具
 答案：错误
 
 检索语言是用来描述文献的内容特征、外表正和表达情报提问的一种人工语言
@@ -523,7 +667,7 @@
 使用《中国学术期刊全文数据库》的"词频"控制，可以提高检索结果的查准率
 答案：正确
 
-《中国学术期刊全文数据库》"在结果中检索"起到的是逻辑"或"的作用
+《中国学术期刊全文数据库》"在结果中检索"起到的是逻辑"或"的��用
 答案：错误
 
 《中国学术期刊全文数据库》统一检索文本框中可以输入含有布尔逻辑算符的表达式
@@ -535,7 +679,7 @@
 在《中国学术期刊全文数据库》中将"打印机"扩展成"彩色打印机"后，可以增加检索结果
 答案：错误
 
-在《中国学术期刊全文数据库》中，需要预先下载安装相应浏览器才可浏览CAJ格式的原文
+在《中国学术期刊全文数据库》中，需要预先下载安装相应浏览器才可览CAJ格式的原文
 答案：正确
 
 《中国学术期刊全文数据库》的原文不可以转换成文本
@@ -565,7 +709,7 @@
 从文献检索的角度来看，一次文献是检索对象，二次文献是检索手段
 答案：错误
 
-OR或+运算符实现逻辑"与"组配，用来组配不同的概念的检索词。是一种概念相交和限定关系的组配。其基本作用是对检索范围加以限定，逐步缩小检索范围，提高检索结果的查准率
+OR或+运算符实现逻辑"与"组配，用来组配不��的概念的检索词。是一种概念相交和限定关系的组配。其基本作用是对检索范围加以限定，逐步缩小检索范围，提高检索结果的查准率
 答案：错误
 
 NOT或-运算符实现逻辑"非"组配，是用来排除含有某些词的记录，其基本作用是缩小检索范围，但并不一定能提高文献命中的准确性，一般只起到减少文献输出量作用。在联机检索中可降低检索费用
@@ -577,7 +721,7 @@ NOT或-运算符实现逻辑"非"组配，是用来排除含有某些词的记�
 查找文献资料、写文献综述是科研选题及进行科研的第一步，因此学习文献综述的撰写也是为今后科研活动打基础的过程
 答案：正确
 
-关键词和主题词都是表征文献实质性内容的词汇，前者是经过词表规范的，后者是未经词表规范的自由词
+关键词和主题词都是表征文献实质性内容的词，前者是经过词表规范的，后者是未经词表规范的自由词
 答案：错误
 
 一项发明创造要获得专利权必须具备新颖性、创造性和实用性
@@ -589,7 +733,7 @@ NOT或-运算符实现逻辑"非"组配，是用来排除含有某些词的记�
 题录型检索工具，其著录项目主要包括文献篇名、作者、文献出处
 答案：正确
 
-使用"opencourseware site:harvard.edu/"这样的检索表达式在百度等搜索引擎中检索可以找到哈佛大学的公开课
+使用"opencourseware site:harvard.edu/"这样的检索表达式在百度等搜索引擎中检索以找到哈佛大学的公开课
 答案：正确
 
 并不是所有的网上资源都有明确的下载链接的资源，对于一些没有明确下载链接的资源，下载的时候需要一些特殊的方法和技巧
@@ -622,7 +766,7 @@ NOT或-运算符实现逻辑"非"组配，是用来排除含有某些词的记�
 查准率是指检索出的符合课题需要的文献与检索出的相关文献量之比
 答案：错误
 
-关键词语言一般直接从文献的篇名或内容中抽取，不受词表控制，存在同义词、多义词
+关键词语言一般直接从文献的篇名或内容中抽取，不受词表控制，存在同义词、多义���
 答案：正确
 
 零次文献是指未公开交流于社会的文献
