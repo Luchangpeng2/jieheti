@@ -14,16 +14,16 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
-            padding: 20px;
+            padding: 10px;
             background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
             min-height: 100vh;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
@@ -31,12 +31,12 @@
         h1 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .question {
-            margin-bottom: 30px;
-            padding: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
             position: relative;
@@ -110,41 +110,7 @@
         }
 
         .navigation {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin: 20px 0;
-            padding: 10px;
-            background: #2d2d2d;
-            border-radius: 8px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-button {
-            padding: 12px 15px;
-            background: #444;
-            border: 2px solid transparent;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .nav-button:hover {
-            background: #555;
-            transform: translateY(-2px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .nav-button.active {
-            background: #64B5F6;
-            border-color: #fff;
-            font-weight: bold;
+            display: none;
         }
 
         .scroll-top {
@@ -193,12 +159,12 @@
         }
 
         @media (max-width: 600px) {
-            .container {
-                padding: 15px;
+            body {
+                padding: 5px;
             }
 
-            .question {
-                padding: 15px;
+            .container {
+                padding: 10px;
             }
 
             .navigation {
@@ -212,21 +178,230 @@
                 font-size: 13px;
             }
         }
+
+        /* 添加菜单按钮样式 */
+        .menu-toggle, .back-button {
+            position: fixed !important;
+            top: 10px !important;
+            z-index: 1000;
+            background-color: #2196F3 !important;
+            color: white !important;
+            border: none !important;
+            padding: 6px 10px !important;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            font-size: 0.9rem !important;
+            text-decoration: none;
+            transition: all 0.3s ease !important;
+        }
+
+        .menu-toggle {
+            left: 15px;
+        }
+
+        .back-button {
+            right: 15px;
+        }
+
+        .menu-toggle:hover, .back-button:hover {
+            background-color: #1976D2 !important;
+        }
+
+        /* 修改顶部导航栏样式 */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #4CAF50;
+            padding: 30px 20px 15px 20px !important;
+            z-index: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .chapter-indicator {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 8px;
+        }
+
+        /* 添加遮罩层样式 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .top-nav {
+                padding: 25px 20px 12px 20px !important;
+            }
+            
+            .chapter-indicator {
+                font-size: 1rem;
+                padding: 0 10px;
+                top: 8px;
+            }
+            
+            .back-button {
+                top: 8px !important;
+                padding: 3px 6px !important;
+                font-size: 0.75rem;
+            }
+            
+            .menu-toggle {
+                top: 8px !important;
+                padding: 3px 6px !important;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .top-nav {
+                background-color: #2d2d2d;
+            }
+        }
+
+        /* 调整主内容区域的上边距，避免被固定导航栏遮挡 */
+        .container {
+            padding-top: 60px;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background-color: #fff;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 999;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #666;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        .sidebar a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .sidebar {
+                background-color: #1e1e1e;
+            }
+
+            .sidebar h3 {
+                color: #fff;
+            }
+
+            .sidebar a {
+                color: #e0e0e0;
+            }
+
+            .sidebar a:hover {
+                background-color: #2d2d2d;
+                color: #81c784;
+            }
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+            }
+        }
     </style>
 </head>
 <body>
+    <button class="menu-toggle">☰ 目录</button>
+    <div class="overlay"></div>
+
+    <div class="top-nav">
+        <div class="chapter-indicator">信息检索填空题</div>
+        <a href="index.html" class="back-button">
+            返回首页 →
+        </a>
+    </div>
+
+    <div class="sidebar">
+        <h3>导航目录</h3>
+        <div class="nav-section">
+            <ul id="questions-nav">
+                <li><a href="javascript:void(0)" data-start="1" data-end="10">1-10题</a></li>
+                <li><a href="javascript:void(0)" data-start="11" data-end="20">11-20题</a></li>
+                <li><a href="javascript:void(0)" data-start="21" data-end="30">21-30题</a></li>
+                <li><a href="javascript:void(0)" data-start="31" data-end="35">31-35题</a></li>
+            </ul>
+        </div>
+    </div>
+
     <div class="scroll-top">↑</div>
     <div class="container">
-        <a href="index.html" class="back-button">返回主页</a>
         <h1>信息检索填空题</h1>
         
-        <div class="navigation">
-            <button class="nav-button active" data-start="1" data-end="10">1-10题</button>
-            <button class="nav-button" data-start="11" data-end="20">11-20题</button>
-            <button class="nav-button" data-start="21" data-end="30">21-30题</button>
-            <button class="nav-button" data-start="31" data-end="35">31-35题</button>
-        </div>
-
         <div id="questions-container"></div>
     </div>
 
@@ -292,7 +467,7 @@ CNKI的中文全称是（）。
 从文献的（）角度区分可将文献分为印刷型、缩微型等。
 答案：载体
 
-具有固定名称、统一出版形式和一定出版规律的定期或不定期的连续出版物称为（）。
+具有固定名称、统一出版形式和一定出版规律的定期或定期的连续出版物称为（）。
 答案：期刊
 
 专利有三个特点（）、（）、（）。
@@ -325,7 +500,7 @@ CNKI的中文全称是（）。
 检索工具中在文献来源项的著录中，常常将期刊名称按一定的缩写规则进行缩写JOURNAL一般缩写为（）。
 答案：J
 
-一般情况下，检索表达式ti=computer or ab=computer指的是在（）字段中检索含有computer的文献记录。
+一般情况下，检索表达式ti=computer or ab=computer指的是在（）字段中检索含有computer的献记录。
 答案：标题或者摘要
 
 在搜索引擎中，filetype:后可以接（）。
@@ -396,14 +571,41 @@ SSCI的中文是（）。
         // 默认显示1-10题
         showQuestions(1, 10);
 
-        // 添加导航按钮事件监听器
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.addEventListener('click', function() {
+        // 更新导航点击事件监听器
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function() {
                 const start = parseInt(this.dataset.start);
                 const end = parseInt(this.dataset.end);
                 showQuestions(start, end);
+                
+                // 更新活动状态
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 在移动端时关闭侧边栏
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.sidebar').classList.remove('active');
+                    document.querySelector('.overlay').classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
             });
+        });
 
+        // 更新菜单切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            const body = document.body;
+
+            function toggleMenu() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+                body.classList.toggle('menu-open');
+            }
+
+            menuToggle.addEventListener('click', toggleMenu);
+            overlay.addEventListener('click', toggleMenu);
         });
 
         // 添加滚动到顶部按钮逻辑

@@ -14,16 +14,16 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
-            padding: 20px;
+            padding: 10px;
             background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
             min-height: 100vh;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
@@ -31,12 +31,12 @@
         h1 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .question {
-            margin-bottom: 30px;
-            padding: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
             position: relative;
@@ -146,10 +146,12 @@
         }
 
         @media (max-width: 600px) {
-            .container {
-                padding: 15px;
+            body {
+                padding: 5px;
             }
-
+            .container {
+                padding: 10px;
+            }
             .question {
                 padding: 15px;
             }
@@ -187,24 +189,226 @@
             background: #1E88E5;
             transform: translateY(-2px);
         }
+
+        /* 添加菜单按钮样式 */
+        .menu-toggle, .back-button {
+            position: fixed !important;
+            top: 10px !important;
+            z-index: 1000;
+            background-color: #2196F3 !important;
+            color: white !important;
+            border: none !important;
+            padding: 6px 10px !important;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            font-size: 0.9rem !important;
+            text-decoration: none;
+            transition: all 0.3s ease !important;
+        }
+
+        .menu-toggle {
+            left: 15px;
+        }
+
+        .back-button {
+            right: 15px;
+        }
+
+        /* 修改顶部导航栏样式 */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #4CAF50;
+            padding: 30px 20px 15px 20px !important;
+            z-index: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .chapter-indicator {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 8px;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background-color: #fff;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 999;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #666;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        .sidebar a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* 遮罩层样式 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* 调整主内容区域的上边距 */
+        .container {
+            padding-top: 60px;
+        }
+
+        /* 移除原来的 navigation 样式 */
+        .navigation {
+            display: none;
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .sidebar {
+                background-color: #1e1e1e;
+            }
+
+            .sidebar h3 {
+                color: #fff;
+            }
+
+            .sidebar a {
+                color: #e0e0e0;
+            }
+
+            .sidebar a:hover {
+                background-color: #2d2d2d;
+                color: #81c784;
+            }
+
+            .top-nav {
+                background-color: #2d2d2d;
+            }
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+            }
+
+            .top-nav {
+                padding: 25px 20px 12px 20px !important;
+            }
+            
+            .chapter-indicator {
+                font-size: 1rem;
+                padding: 0 10px;
+                top: 8px;
+            }
+            
+            .back-button {
+                top: 8px !important;
+                padding: 3px 6px !important;
+                font-size: 0.75rem;
+            }
+            
+            .menu-toggle {
+                top: 8px !important;
+                padding: 3px 6px !important;
+                font-size: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="scroll-top">↑</div>
+    <button class="menu-toggle">☰ 目录</button>
+    <div class="overlay"></div>
+
+    <div class="top-nav">
+        <div class="chapter-indicator">信息检索判断题</div>
+        <a href="index.html" class="back-button">
+            返回首页 →
+        </a>
+    </div>
+
+    <div class="sidebar">
+        <h3>导航目录</h3>
+        <div class="nav-section">
+            <ul id="questions-nav">
+                <li><a href="javascript:void(0)" data-start="1" data-end="10">1-10题</a></li>
+                <li><a href="javascript:void(0)" data-start="11" data-end="20">11-20题</a></li>
+                <li><a href="javascript:void(0)" data-start="21" data-end="30">21-30题</a></li>
+                <li><a href="javascript:void(0)" data-start="31" data-end="40">31-40题</a></li>
+                <li><a href="javascript:void(0)" data-start="41" data-end="50">41-50题</a></li>
+                <li><a href="javascript:void(0)" data-start="51" data-end="58">51-57题</a></li>
+            </ul>
+        </div>
+    </div>
 
     <div class="container">
-        <a href="index.html" class="back-button">返回主页</a>
         <h1>信息检索判断题</h1>
-        
-        <div class="navigation">
-            <button class="nav-button active" data-start="1" data-end="10">1-10题</button>
-            <button class="nav-button" data-start="11" data-end="20">11-20题</button>
-            <button class="nav-button" data-start="21" data-end="30">21-30题</button>
-            <button class="nav-button" data-start="31" data-end="40">31-40题</button>
-            <button class="nav-button" data-start="41" data-end="50">41-50题</button>
-            <button class="nav-button" data-start="51" data-end="58">51-58题</button>
-        </div>
-
         <div id="questions-container"></div>
     </div>
 
@@ -364,7 +568,7 @@
 OR或+运算符实现逻辑"与"组配，用来组配不同的概念的检索词。是一种概念相交和限定关系的组配。其基本作用是对检索范围加以限定，逐步缩小检索范围，提高检索结果的查准率
 答案：错误
 
-NOT或-运算符实现逻辑"非"组配，是用来排除含有某些词的记录，其基本作用是缩小检索范围，但并不一定能提高文献命中的准确性，一般只起到减少文献输出量的作用。在联机检索中可降低检索费用
+NOT或-运算符实现逻辑"非"组配，是用来排除含有某些词的记录，其基本作用是缩小检索范围，但并不一定能提高文献命中的准确性，一般只起到减少文献输出量作用。在联机检索中可降低检索费用
 答案：正确
 
 一篇论文可选取8-10个词作为关键词
@@ -397,7 +601,7 @@ NOT或-运算符实现逻辑"非"组配，是用来排除含有某些词的记�
 多数搜索引擎对支持对以DOC、XLS、PPT、RTF、PDF为后缀名的文件进行检索
 答案：正确
 
-在百度搜索时，使用空格增加检索条件，缩小了结果范围，提高了查准率
+在百度搜索时，用空格增加检索条件，缩小了结果范围，提高了查准率
 答案：正确
 
 在百度搜索时使用site语法，增加检索条件，缩小了结果范围，提高了查全率
@@ -446,31 +650,41 @@ NOT或-运算符实现逻辑"非"组配，是用来排除含有某些词的记�
         // 默认显示1-10题
         showQuestions(1, 10);
 
-        // 添加导航按钮事件监听器
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.addEventListener('click', function() {
+        // 更新导航点击事件监听器
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function() {
                 const start = parseInt(this.dataset.start);
                 const end = parseInt(this.dataset.end);
                 showQuestions(start, end);
+                
+                // 更新活动状态
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 在移动端时关闭侧边栏
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.sidebar').classList.remove('active');
+                    document.querySelector('.overlay').classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
             });
         });
 
-        // 滚动到顶部按钮逻辑
-        const scrollTopButton = document.querySelector('.scroll-top');
-        
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                scrollTopButton.style.display = 'flex';
-            } else {
-                scrollTopButton.style.display = 'none';
+        // 添加菜单切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            const body = document.body;
+
+            function toggleMenu() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+                body.classList.toggle('menu-open');
             }
-        });
-        
-        scrollTopButton.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+
+            menuToggle.addEventListener('click', toggleMenu);
+            overlay.addEventListener('click', toggleMenu);
         });
 
         // 平滑滚动到当前题目组
