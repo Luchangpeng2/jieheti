@@ -578,7 +578,7 @@
             }
         }
 
-        /* 在样式部分添加新的CSS样式 */
+        /* 在样��部分加新的CSS样式 */
         .question div.option {
             cursor: pointer;
             border: 2px solid transparent;
@@ -703,7 +703,7 @@
             transition: all 0.3s ease;
         }
 
-        /* ��化选项样式 */
+        /* 化选项样式 */
         .question .option {
             position: relative;
             padding: 15px 20px;
@@ -875,7 +875,7 @@
             }
         }
 
-        /* 错题按钮样式 */
+        /* 错��按钮样式 */
         .wrong-filter-btn {
             display: block;
             margin-top: 8px;
@@ -971,8 +971,27 @@
         let currentPage = '';  // 当前显示的页面
         let correctAnswered = 0; // 正确数计数
         let answeredCount = 0;  // 已做题数计数
-        let currentPageTotalQuestions = 0; // 当前页面总题��
+        let currentPageTotalQuestions = 0; // 当前页面总题数
         
+        // 添加保存和加载统计数据的函数
+        function saveStats() {
+            localStorage.setItem('infoChoiceStats', JSON.stringify({
+                correctAnswered,
+                answeredCount
+            }));
+        }
+
+        function loadStats() {
+            const stats = localStorage.getItem('infoChoiceStats');
+            if (stats) {
+                const { correctAnswered: saved_correct, answeredCount: saved_answered } = JSON.parse(stats);
+                correctAnswered = saved_correct;
+                answeredCount = saved_answered;
+                document.getElementById('correct-count').textContent = correctAnswered;
+                document.getElementById('answered-count').textContent = answeredCount;
+            }
+        }
+
         // 加载题目数据
         async function loadQuestions() {
             try {
@@ -992,11 +1011,11 @@
             container.innerHTML = ''; // 清空当前内容
             
             if (questionsData[groupId]) {
-                // 切换章节时重置计数
-                correctAnswered = 0;
-                answeredCount = 0;
-                document.getElementById('correct-count').textContent = '0';
-                document.getElementById('answered-count').textContent = '0';
+                // 重置仅看错题按钮状态
+                showWrongOnly = false;
+                const wrongFilterBtn = document.getElementById('show-wrong-only');
+                wrongFilterBtn.classList.remove('active');
+                wrongFilterBtn.textContent = '仅看错题';
                 
                 // 更新当前页面总题数
                 currentPageTotalQuestions = questionsData[groupId].length;
@@ -1118,6 +1137,9 @@
                 const selectedAnswer = String.fromCharCode(65 + parseInt(optionElement.dataset.index));
                 const isCorrect = selectedAnswer === correctAnswer;
                 
+                // 标记题目为已完成
+                questionDiv.dataset.answered = 'true';
+                
                 // 立即显示答案
                 answerDiv.style.display = 'block';
                 requestAnimationFrame(() => {
@@ -1152,6 +1174,9 @@
                 correctAnswered++;
                 document.getElementById('correct-count').textContent = correctAnswered;
             }
+            
+            // 保存统计数据
+            saveStats();
         }
 
         // 设置导航
@@ -1177,8 +1202,13 @@
 
         // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
-            // 直接加载题目，不需要加载统计数据
-            loadQuestions();
+            loadStats();  // 加载保存的统计数据
+            loadQuestions();  // 加载题目
+            
+            // 添加返回按钮的点击事件，清除统计数据
+            document.querySelector('.back-button').addEventListener('click', function() {
+                localStorage.removeItem('infoChoiceStats');
+            });
         });
 
         // 添加菜单切换功能
